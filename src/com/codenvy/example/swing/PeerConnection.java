@@ -24,21 +24,29 @@ public class PeerConnection {
         }
 
     }
-    public void handshake() throws IOException{
-        String serverHandshakeMessage;
-        
+    
+    public void handshake() throws IOException{      
         //BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
         Socket clientSocket = new Socket(IP, port);
         
         DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        DataInputStream is = new DataInputStream(clientSocket.getInputStream());
         os.writeByte(PSTRLEN);
         os.write(PSTR.getBytes());
         os.write(new byte[8]);
         os.write(infoHash.getBytes());
         os.write(peerID.getBytes());
-        serverHandshakeMessage = inFromServer.readLine();
-        System.out.println("FROM SERVER: " + serverHandshakeMessage);
+        //serverHandshakeMessage = inFromServer.readLine();
+        //System.out.println("FROM SERVER: " + serverHandshakeMessage);
+        int inPSTRLEN = is.readByte();
+        byte[] inPSTR = new byte[inPSTRLEN];
+        is.readFully(inPSTR);
+        byte[] reserved = new byte[8];
+        is.readFully(reserved);
+        byte[] infoHash = new byte[20];
+        is.readFully(infoHash);
+        byte[] peerId = new byte[20];
+        is.readFully(peerId);
         clientSocket.close();
     }
 }
