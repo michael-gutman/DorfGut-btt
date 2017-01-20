@@ -128,8 +128,8 @@ public class TrackerProtocol {
 
 
 	public static void main(String args[]) throws FileNotFoundException{
-		MetaInfo m = new MetaInfo("KNOPPIX_V7.7.1DVD-2016-10-22-EN.torrent");
-		//MetaInfo m = new MetaInfo("ubuntu-16.10-desktop-amd64.iso.torrent");
+		MetaInfo m = new MetaInfo("Tester1.torrent");
+		//MetaInfo m = new MetaInfo("Tester2.torrent");
 		TrackerProtocol tp = new TrackerProtocol();
 		HashMap<String, Object> j = tp.parseResponse(tp.sendGet(m));
 		ArrayList<PeerConnection> connections = new ArrayList<PeerConnection>();
