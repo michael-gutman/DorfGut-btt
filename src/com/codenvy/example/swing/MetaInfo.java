@@ -39,9 +39,9 @@ public class MetaInfo {
         HashMap<String, Object> info = (HashMap<String, Object>)j.get("info");
         
         announce = j.get("announce").toString();
-        for (int i = 0; i < doubleList.size(); i++){
-            announceList.add(doubleList.get(i).get(0)); 
-        }
+//        for (int i = 0; i < doubleList.size(); i++){
+//            announceList.add(doubleList.get(i).get(0)); 
+//        }
     
         pieceLength = (long)info.get("piece length");
         pieces = info.get("pieces").toString();
