@@ -107,7 +107,7 @@ public class TrackerProtocol {
 	}
 
 	@SuppressWarnings("unchecked")
-	private HashMap<String, Object> parseResponse(String response) {
+	private HashMap<String, Object> parseResponse(String response) throws BencodeReadException{
 		ByteArrayInputStream bais = new ByteArrayInputStream(response.getBytes());
 		BencodeReader br = new BencodeReader(bais);
 		HashMap<String, Object> j = null;
@@ -115,9 +115,6 @@ public class TrackerProtocol {
 			j = (HashMap<String, Object>) br.read();
 			br.close();
 		}
-		catch (BencodeReadException e) {
-			e.printStackTrace();
-		} 
 		catch (IOException e) {
 			if (e instanceof EOFException) {
 				return parseResponse(response + "e");
@@ -131,14 +128,22 @@ public class TrackerProtocol {
 		MetaInfo m = new MetaInfo("Tester1.torrent");
 		//MetaInfo m = new MetaInfo("Tester2.torrent");
 		TrackerProtocol tp = new TrackerProtocol();
-		HashMap<String, Object> j = tp.parseResponse(tp.sendGet(m));
+		HashMap<String, Object> j = null;
+		while (j==null) {
+			try {
+				j = tp.parseResponse(tp.sendGet(m));
+			}catch (BencodeReadException e) {
+				System.out.println("failed to parse response");
+			}
+		}
 		ArrayList<PeerConnection> connections = new ArrayList<PeerConnection>();
 		if (j.get("peers") instanceof List) {
 			ArrayList<HashMap<String, Object>> peerList = (ArrayList<HashMap<String, Object>>) j.get("peers");
 			HashMap<String, Object> peer = peerList.get(0);
 			System.out.println("ip: " + peer.get("ip"));
 			System.out.println("port: " + (int)(long)peer.get("port"));
-			connections.add(new PeerConnection((String) peer.get("ip"),(int)(long)peer.get("port"), (String) peer.get("peer id"), tp.infoHash, tp.PEER_ID));
+			PeerConnection one = new PeerConnection((String) peer.get("ip"),(int)(long)peer.get("port"), (String) peer.get("peer id"), tp.infoHash, tp.PEER_ID);
+			
 			//for (HashMap<String, Object> peer : peerList) {
 			//	System.out.println("ip: " + peer.get("ip"));
 			//	System.out.println("port: " + (int)(long)peer.get("port"));

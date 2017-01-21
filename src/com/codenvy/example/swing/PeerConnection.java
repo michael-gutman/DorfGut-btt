@@ -27,26 +27,43 @@ public class PeerConnection {
     
     public void handshake() throws IOException{      
         //BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+    	System.out.println("attempting to open socket");
+    	
         Socket clientSocket = new Socket(IP, port);
+        
+        System.out.println("connected");
         
         DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());
         DataInputStream is = new DataInputStream(clientSocket.getInputStream());
+        
         os.writeByte(PSTRLEN);
         os.write(PSTR.getBytes());
         os.write(new byte[8]);
         os.write(infoHash.getBytes());
         os.write(peerID.getBytes());
+        //System.out.println(is.read());
         //serverHandshakeMessage = inFromServer.readLine();
         //System.out.println("FROM SERVER: " + serverHandshakeMessage);
-        int inPSTRLEN = is.readByte();
-        byte[] inPSTR = new byte[inPSTRLEN];
-        is.readFully(inPSTR);
-        byte[] reserved = new byte[8];
-        is.readFully(reserved);
-        byte[] infoHash = new byte[20];
-        is.readFully(infoHash);
-        byte[] peerId = new byte[20];
-        is.readFully(peerId);
+//        int inPSTRLEN = is.readByte();
+//        byte[] inPSTR = new byte[inPSTRLEN];
+//        is.readFully(inPSTR);
+//        byte[] reserved = new byte[8];
+//        is.readFully(reserved);
+//        byte[] infoHash = new byte[20];
+//        is.readFully(infoHash);
+//        byte[] peerId = new byte[20];
+//        is.readFully(peerId);
+        byte temp[] = new byte[68];
+        try {
+        	while (true) {
+        		System.out.println("reading...");
+        		is.readFully(temp);
+        		System.out.println(temp.toString());
+        	}
+        } catch(EOFException e) {
+        	System.out.println("end of file");
+        	clientSocket.close();
+        }
         clientSocket.close();
     }
 }
