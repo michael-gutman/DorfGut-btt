@@ -139,11 +139,7 @@ public class TrackerProtocol {
 			for (HashMap<String, Object> peer : peerList) {
 				System.out.println("ip: " + peer.get("ip"));
 				System.out.println("port: " + (int)(long)peer.get("port"));
-				try {
 				connections.add(new PeerConnection((String) peer.get("ip"),(int)(long)peer.get("port"), (String) peer.get("peer id"), tp.infoHash, tp.PEER_ID));
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
 				System.out.println("======================");
 			}
 		}

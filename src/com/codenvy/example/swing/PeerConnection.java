@@ -26,10 +26,10 @@ public class PeerConnection {
 
     }
     
+    
     public void handshake() throws IOException{      
         //BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("attempting to open socket");
-
         Socket clientSocket = new Socket(IP, port);
         
         System.out.println("connected");
@@ -42,21 +42,30 @@ public class PeerConnection {
         os.write(new byte[8]);
         os.write(infoHash);
         os.write(peerID.getBytes());
+        os.flush();
         //System.out.println(is.read());
         //serverHandshakeMessage = inFromServer.readLine();
         //System.out.println("FROM SERVER: " + serverHandshakeMessage);
         try {
+        	while (is.available() == 0) {
+        		os.writeByte(PSTRLEN);
+                os.write(PSTR.getBytes());
+                os.write(new byte[8]);
+                os.write(infoHash);
+                os.write(peerID.getBytes());
+                os.flush();
+        	}
         	while (is.available() > 0) {
         		int inPSTRLEN = is.readByte();
                 byte[] inPSTR = new byte[inPSTRLEN];
                 is.readFully(inPSTR);
                 byte[] reserved = new byte[8];
                 is.readFully(reserved);
-                byte[] infoHash = new byte[20];
-                is.readFully(infoHash);
-                byte[] peerId = new byte[20];
-                is.readFully(peerId);
-                System.out.println("read");
+                byte[] infoHashin = new byte[20];
+                is.readFully(infoHashin);
+                byte[] peerIdin = new byte[20];
+                is.readFully(peerIdin);
+                System.out.println("Data Recieved"); //figure out how and what to do now
         	}
         } 
         catch (EOFException e) {
