@@ -15,7 +15,8 @@ import com.hypirion.bencode.BencodeReadException;
 import com.hypirion.bencode.BencodeReader;
 
 public class TrackerProtocol {
-	private String announceKey, infoHash;
+	private String announceKey, infoHashURL;
+	private byte[] infoHash;
 	private final String PEER_ID = "ST00001SKETCHTORRENT";
 	private final String A = "&";
 	private final String Q = "?";
@@ -30,13 +31,14 @@ public class TrackerProtocol {
 	private void importData(MetaInfo m) {
 		announceKey = (String) m.getValues('a');
 		fileSize = (long) m.getValues('f');
-		infoHash = (String) m.getValues ('g');
+		infoHashURL = (String) m.getValues ('g');
+		infoHash = (byte[]) m.getValues('h');
 		remaining = fileSize;
 	}
 
 	private String generateURL() {
 		return announceKey + 
-				Q + "info_hash=" + infoHash 
+				Q + "info_hash=" + infoHashURL 
 				+ A + "peer_id=" + PEER_ID 
 				+ A + "port=" + PORT 
 				+ A + "uploaded=" + uploaded 

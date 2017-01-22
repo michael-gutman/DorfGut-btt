@@ -16,7 +16,8 @@ public class MetaInfo {
     private long pieceLength;
     private boolean multiFile;
     private long totalFileSize = 0;
-    private String sha1 = "";
+    private String sha1URL = "";
+    private byte[] sha1;
     
     public MetaInfo(String filePath) throws FileNotFoundException{
         FileInputStream torrent = new FileInputStream(new File(filePath));
@@ -61,7 +62,9 @@ public class MetaInfo {
             totalFileSize += (long) files.get(i).get("length");
         }
         
-        sha1 = InfoHashGen.generate(filePath, true);
+        Object[] hashs = InfoHashGen.generate(filePath);
+        sha1URL = (String) hashs[0];
+        sha1 = (byte[]) hashs[1];
        
         //System.out.println("announce: " + announce);
         //System.out.println("announce-list: " + announceList);
@@ -120,7 +123,8 @@ public class MetaInfo {
             case 'd': return pieceLength;
             case 'e': return files;
             case 'f': return totalFileSize;
-            case 'g': return sha1;
+            case 'g': return sha1URL;
+            case 'h': return sha1;
             default: return 'a';
         }
         

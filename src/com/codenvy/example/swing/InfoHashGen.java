@@ -10,7 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class InfoHashGen {
-    public static String generate(String filePath, boolean format) {
+    public static Object[] generate(String filePath) {
 		File file = new File(filePath);
 		MessageDigest sha1 = null;;
 		try {
@@ -39,8 +39,7 @@ public class InfoHashGen {
 
 		byte[] hash = sha1.digest();
 		
-		if (format) return byteArrayToURLString(hash);
-		else return hash.toString();
+		return new Object[] {byteArrayToURLString(hash), hash};
 	}
 	
 	public static String byteArrayToURLString(byte in[]) {
