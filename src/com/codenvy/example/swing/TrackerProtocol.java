@@ -1,13 +1,18 @@
 package com.codenvy.example.swing;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import com.hypirion.bencode.*;
-import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.hypirion.bencode.BencodeReadException;
+import com.hypirion.bencode.BencodeReader;
 
 public class TrackerProtocol {
 	private String announceKey, infoHash;
@@ -43,7 +48,7 @@ public class TrackerProtocol {
 				+ A + "key=" + PEER_ID;
 	}
 
-	public String sendGet(MetaInfo m) {
+	public byte[] sendGet(MetaInfo m) {
 		importData(m);
 		String url = generateURL();
 		URL obj = null;
@@ -81,34 +86,21 @@ public class TrackerProtocol {
 
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
-		BufferedReader in = null;
+		DataInputStream in = null;
+		byte[] response = null;
 		try {
-			in = new BufferedReader(
-					new InputStreamReader(con.getInputStream()));
-		}
-		catch (IOException e){
+			 in = new DataInputStream(con.getInputStream());
+			 response = new byte[in.available()];
+			 in.readFully(response);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		try {
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-		} 
-		catch (IOException e){
-			e.printStackTrace();
-		}
-		System.out.println(response.toString());
-		return response.toString();
+		return response;
 	}
 
 	@SuppressWarnings("unchecked")
-	private HashMap<String, Object> parseResponse(String response) throws BencodeReadException{
-		ByteArrayInputStream bais = new ByteArrayInputStream(response.getBytes());
+	private HashMap<String, Object> parseResponse(byte[] response) throws BencodeReadException{
+		ByteArrayInputStream bais = new ByteArrayInputStream(response);
 		BencodeReader br = new BencodeReader(bais);
 		HashMap<String, Object> j = null;
 		try {
@@ -116,9 +108,7 @@ public class TrackerProtocol {
 			br.close();
 		}
 		catch (IOException e) {
-			if (e instanceof EOFException) {
-				return parseResponse(response + "e");
-			}
+			e.printStackTrace();
 		}
 		return j;
 	}
