@@ -131,17 +131,21 @@ public class TrackerProtocol {
 		ArrayList<PeerConnection> connections = new ArrayList<PeerConnection>();
 		if (j.get("peers") instanceof List) {
 			ArrayList<HashMap<String, Object>> peerList = (ArrayList<HashMap<String, Object>>) j.get("peers");
-			HashMap<String, Object> peer = peerList.get(0);
-			System.out.println("ip: " + peer.get("ip"));
-			System.out.println("port: " + (int)(long)peer.get("port"));
-			PeerConnection one = new PeerConnection((String) peer.get("ip"),(int)(long)peer.get("port"), (String) peer.get("peer id"), tp.infoHash, tp.PEER_ID);
+			//HashMap<String, Object> peer = peerList.get(0);
+			//System.out.println("ip: " + peer.get("ip"));
+			//System.out.println("port: " + (int)(long)peer.get("port"));
+			//PeerConnection one = new PeerConnection((String) peer.get("ip"),(int)(long)peer.get("port"), (String) peer.get("peer id"), tp.infoHash, tp.PEER_ID);
 			
-			//for (HashMap<String, Object> peer : peerList) {
-			//	System.out.println("ip: " + peer.get("ip"));
-			//	System.out.println("port: " + (int)(long)peer.get("port"));
-			//	connections.add(new PeerConnection((String) peer.get("ip"),(int)(long)peer.get("port"), (String) peer.get("peer id"), tp.infoHash, tp.PEER_ID));
-			//	System.out.println("======================");
-			//}
+			for (HashMap<String, Object> peer : peerList) {
+				System.out.println("ip: " + peer.get("ip"));
+				System.out.println("port: " + (int)(long)peer.get("port"));
+				try {
+				connections.add(new PeerConnection((String) peer.get("ip"),(int)(long)peer.get("port"), (String) peer.get("peer id"), tp.infoHash, tp.PEER_ID));
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+				System.out.println("======================");
+			}
 		}
 	}
 
