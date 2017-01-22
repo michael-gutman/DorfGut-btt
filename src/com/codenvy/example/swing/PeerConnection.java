@@ -62,8 +62,12 @@ public class PeerConnection {
         	}
         } catch(EOFException e) {
         	System.out.println("end of file");
+        	is.close();
+        	os.close();
         	clientSocket.close();
         }
+        is.close();
+        os.close();
         clientSocket.close();
     }
 }
