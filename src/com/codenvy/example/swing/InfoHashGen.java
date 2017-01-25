@@ -8,8 +8,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+/**
+ * InfoHashGen generates the 20-byte SHA1 encoded hash of the info dictionary in the torrent file.
+ */
 public class InfoHashGen {
+	/**
+	 * Generate the 20-byte SHA1 encoded hash of the info dictionary in the torrent file, used to verify the file being requested and downloaded.
+	 * @param filePath path to the .torrent file
+	 * @return Object[0] infoHash as a URL encoded String
+	 * @return Object[1] infoHash as a byte array
+	 */
     public static Object[] generate(String filePath) {
 		File file = new File(filePath);
 		MessageDigest sha1 = null;;
@@ -23,12 +31,12 @@ public class InfoHashGen {
 		try {
 		    input = new FileInputStream(file);
 		    StringBuilder builder = new StringBuilder();
-		    while (!builder.toString().endsWith("4:info")) {
+		    while (!builder.toString().endsWith("4:info")) { //reads the file until it finds the info dictionary
 		        builder.append((char) input.read());
 		    }
-		    ByteArrayOutputStream output = new ByteArrayOutputStream();
-		    for (int data; (data = input.read()) > -1; output.write(data));
-		    sha1.update(output.toByteArray(), 0, output.size() - 1);
+		    ByteArrayOutputStream output = new ByteArrayOutputStream(); 
+		    for (int data; (data = input.read()) > -1; output.write(data)); //reads the reset of the file to get the infodictionary
+		    sha1.update(output.toByteArray(), 0, output.size() - 1); //sha1 encodes the info dictionary
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -37,11 +45,16 @@ public class InfoHashGen {
 		    if (input != null) try { input.close(); } catch (IOException ignore) {}
 		}
 
-		byte[] hash = sha1.digest();
+		byte[] hash = sha1.digest(); 
 		
 		return new Object[] {byteArrayToURLString(hash), hash};
 	}
 	
+    /**
+     * Converts a byte array to a url safe %nn encoded string
+     * @param in byte array to convert to a url encoded string
+     * @return url safe string representation of the byte array
+     */
 	public static String byteArrayToURLString(byte in[]) {
 		byte ch = 0x00;
 		int i = 0;
@@ -80,3 +93,4 @@ public class InfoHashGen {
 		return rslt;
 	}
 }
+
